@@ -93,7 +93,7 @@ export default {
 | `k.rise(els, at, { y, dur, stagger })`, `k.fade(els, at, dur)` | soft entrances |
 | `k.pop(els, at, { from, stagger })` | spring pop |
 | `k.strike(els, at, dur, stagger)` | scaleX 0 to 1 from the left (strikes, underlines, rules) |
-| `k.typeOn(el, at, dur)` | types an element's text on |
+| `k.typeOn(el, at, dur)` | types an element's text on; it replaces the element's contents with plain text, so give it a leaf element and keep any markup (spans, a second colour) in siblings |
 | `k.countUp(el, at, dur, from, to, fmt)` | counts a number up |
 | `k.counter(t, label, value, dur)` | changes the HUD running index at time t (Innernet ticked ARTICLES 958 to 959 when a demo folder joined) |
 | `k.pulseMeter(t, dur)` | makes the HUD badge glow (the beats that name the through-line) |
@@ -136,9 +136,9 @@ frame in the storyboard: the confirmed layout is kept and dressed, never redrawn
 `npm run check` reports errors by element. The ones a new film usually hits:
 
 - **content_overlap between a big serif title and a label above it**, even when the glyphs
-  do not touch. A display face's line box is taller than its glyphs, so leave 30 px or
-  more between a large title and the kicker or label above it, or lower the title's
-  `line-height`.
+  do not touch. A display face's line box is taller than its glyphs. Give a big title or
+  numeral `line-height: 1` and leave a gap of about 30% of its font size between it and the
+  label above or beside it (a 230 px numeral needed about 70 px).
 - **Overlap you meant** (a pile of cards, a stamp over a page): put
   `data-layout-allow-overlap` on each overlapping element itself. On a container it does
   nothing.

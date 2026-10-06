@@ -1,5 +1,5 @@
 // Sound marks for the film. None ship with the skill: each film generates its own with the
-// user's ElevenLabs key (eight calls, one take per mark), then listens and retunes by ear.
+// user's ElevenLabs key (eight calls, one take per mark), then checks and retunes them.
 //
 //   node assets/audio/sfx/sfx.mjs generate [name ...]   render takes into sfx/takes/ (ElevenLabs, costs credits; TAKES=n env)
 //   node assets/audio/sfx/sfx.mjs build                 cut the picked take of each mark into sfx/<name>.mp3

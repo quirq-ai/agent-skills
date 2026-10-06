@@ -75,16 +75,20 @@ repo must stay untouched, put the film folder elsewhere and run the product from
 copy (`git archive HEAD | tar -x -C <scratch>`), since installing and building it writes
 into the tree.
 
-The template ships a four-frame starter film so it builds out of the box. Before writing your
+The template ships a four-frame starter film (three scenes and a chapter card) so it builds out of the box. Before writing your
 own frames, delete its scenes (`src/scenes/*.mjs`) and its plate (`assets/plates/example.svg`,
 keep `assets/plates/src/example.mjs` as the pattern), because a leftover `03-the-idea.mjs`
 silently attaches to whatever your frame 03 is. Then:
 
 1. **Read the product.** Its README, docs, DESIGN.md or brand tokens, and the code paths
-   behind each claim you might make. When the product has a deployed URL, capture that;
+   behind each claim you might make. When the product has a deployed URL (the README, the
+   repo's homepage or `package.json` `homepage`, or what the requester gave), capture that;
    otherwise run it if you can. Capture real screens at 2x with
    `node scripts/capture.mjs <url> <name>` (writes `assets/captures/<name>@2x.png` and a 1x
-   copy). Never mock the product's UI.
+   copy). Never mock the product's UI. If no screen can be had (the URL is unreachable and the
+   product will not run), say so in the brief, film real artefacts instead (its config, its
+   repo list, a real file as a card) alongside the plates, and tell the requester the film
+   has no product screen and why.
 2. **Brief.** Fill `BRIEF.md`: the one-sentence message, audience, chapters, the
    requester's words verbatim, and the defaults you chose.
 3. **Facts.** Fill `FACTS.md`: every number, name, path and claim the film could use, each
@@ -100,7 +104,8 @@ silently attaches to whatever your frame 03 is. Then:
    re-take until the check is clean. Number words up to ninety-nine and digits already
    match (larger numbers, ordinals and percent may still show as diffs). A brand that
    is right as spoken but spelled differently by the transcriber ("quirq" heard as
-   "quirk") goes in `ACCEPT` after you have listened to it once. `node src/film.mjs` now
+   "quirk") goes in `ACCEPT` once the respelling is in `SAY` (an agent cannot listen, so
+   trust the transcript for everything else). `node src/film.mjs` now
    prints real timings.
 6. **Plates.** One generator per diagram in `assets/plates/src/` built on `lib.mjs`
    (`example.mjs` is the pattern): five layers (construction, main, detail, accent, labels),
@@ -115,8 +120,9 @@ silently attaches to whatever your frame 03 is. Then:
    timing change. Repin every chunk's `to` to your own frame ids first: the shipped plan
    points at the starter's frames 02 to 04. Generate the eight sound marks once with
    `node assets/audio/sfx/sfx.mjs generate && node assets/audio/sfx/sfx.mjs build` (eight
-   short ElevenLabs calls), listen to each, and regenerate any that sound wrong (the header
-   of `sfx.mjs` says how). Add a mark only when a scene needs one.
+   short ElevenLabs calls). An agent cannot listen: check each mark's length and level
+   (`ffmpeg -i <mark>.mp3 -af volumedetect -f null -`) and regenerate any that is silent,
+   clipped or far off its neighbours (the header of `sfx.mjs` says how). Add a mark only when a scene needs one.
 9. **Gate.** `./scripts/finish.sh` then `npm run check` (runtime, layout, motion, contrast)
    must pass with 0 errors. Lint warnings are expected because the engine writes one
    generated composition on purpose: one `nested_structure_needs_subcomposition` per scene,
@@ -128,8 +134,8 @@ silently attaches to whatever your frame 03 is. Then:
     for the web copy, captions and poster. Commit the film's sources, never `renders/`,
     `previews/`, `.env` or `node_modules/`.
 
-A delivery render is slow: about 2 frames a second on a software GPU, so a 60 s film
-(1,800 frames) takes about 15 minutes. Start it in the background with its output going to a
+A delivery render is slow: 1.3 to 2 frames a second on a software GPU, so a 60 s film
+(1,800 frames) takes 15 to 25 minutes. Start it in the background with its output going to a
 log, and keep working. It is finished when the process exits 0 and the log's last line names
 the MP4. The quality setting changes the encode, not the frame capture, so no quality is
 much faster; for a quick look use `frame.mjs` sheets of the built `index.html`.
