@@ -21,6 +21,10 @@ if (!mp4 || !(every > 0)) {
   process.exit(1);
 }
 const dur = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", mp4], { encoding: "utf8" }).trim());
+if (every * 2 > dur) {
+  console.error(`--every ${every} leaves no frame in a ${dur.toFixed(1)}s film; use less than ${(dur / 2).toFixed(1)}`);
+  process.exit(1);
+}
 const n = Math.max(1, Math.floor(dur / every));
 const rows = Math.ceil(n / 3);
 const out = path.resolve(outArg ?? path.join(root, ".hyperframes/contact.png"));

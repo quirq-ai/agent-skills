@@ -4,6 +4,10 @@ This film is built with the explainer-film skill. Its scene contract is `src/ENG
 its facts are `FACTS.md`. Everything below is HyperFrames' own project guidance (from
 `hyperframes init`), kept because the engine writes a HyperFrames composition.
 
+**Where they disagree, the explainer-film skill wins:** do not start at `/hyperframes` or
+route to its workflows, skip its usage check and intent interview, write scenes to
+`src/ENGINE.md`, and keep the pinned `hyperframes@0.8.111` (do not run `upgrade`).
+
 
 ## Skills — USE THESE FIRST
 

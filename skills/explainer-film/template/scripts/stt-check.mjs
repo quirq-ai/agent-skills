@@ -13,7 +13,7 @@ import * as script from "../src/script.mjs";
 const { LINES } = script;
 // Known-good differences: [written, heard] pairs that are right as spoken (a brand name the
 // transcriber spells its own way, "quirq" heard as "quirk"). Listen once before adding one.
-const ACCEPT = (script.ACCEPT ?? []).map(([w, h]) => [w.toLowerCase(), h.toLowerCase()]);
+let ACCEPT = script.ACCEPT ?? [];
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const envFile = path.join(root, ".env");
@@ -42,6 +42,7 @@ function numbers(words) {
   return out;
 }
 const norm = (s) => numbers(s.toLowerCase().replace(/(\d),(\d)/g, "$1$2").replace(/-/g, " ").replace(/[^a-z0-9' ]+/g, " ").split(/\s+/).filter(Boolean));
+ACCEPT = ACCEPT.map(([w, h]) => [norm(w).join(" "), norm(h).join(" ")]);
 const accepted = (d) => ACCEPT.some(([w, h]) => w === d.said && h === d.heard);
 
 async function transcribe(file) {
@@ -88,5 +89,6 @@ for (const id of ids) {
 }
 const dirty = ids.filter((id) => report[id].diffs.length);
 console.log(dirty.length ? `${dirty.length} line(s) to fix: respell in SAY and re-take, or listen and add a known-good pair to ACCEPT` : "all clean");
+process.exitCode = dirty.length ? 1 : 0;
 fs.mkdirSync(path.join(root, ".hyperframes"), { recursive: true });
 fs.writeFileSync(path.join(root, ".hyperframes/stt-report.json"), JSON.stringify(report, null, 2));

@@ -29,9 +29,10 @@ Fonts: `display` (Instrument Serif), `serif` / `serif-i` (Newsreader), `mono`
 (JetBrains Mono), Inter for UI. Sizes are video sizes: display numerals 120 to 260px,
 titles 52 to 64px, lines 28 to 34px, mono labels 18 to 24px.
 
-A plate (1600x1000) mounted at its full scene width shows its 18 px labels at about 14 px.
-Mount it at least 1300 px wide so labels stay readable, and keep anything near the plate's
-bottom edge clear of the caption band once it is scaled.
+A plate is 1600x1000, so its labels shrink with the mount: at the starter's 1170 px mount an
+18 px label shows at about 13 px. For readable labels mount it 1300 px wide or more (move
+it left to make room, since x 110 to 1810 is the safe area), and keep anything near the
+plate's bottom edge clear of the caption band once it is scaled.
 
 ## Module shape
 

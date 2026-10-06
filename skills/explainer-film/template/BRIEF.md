@@ -1,5 +1,5 @@
 ---
-workflow: general-video
+workflow: explainer-film  # this skill's run, not a HyperFrames workflow
 flow: automation
 storyboard: yes
 message: "<the one sentence a viewer should leave with>"

@@ -14,7 +14,8 @@ It is the Innernet field guide film (quirq-ai/innernet, `film/`) made reusable. 
 from that film is in `template/`; the craft lessons are in `references/craft.md`; the
 reference film's brief, storyboard, script and scenes are in `references/examples/innernet/`.
 `references/examples/quirq-infra/` is a second film made with the same engine in the quirq
-brand (dark ground, pink accent, Poppins), with its fact sheet and the palette to reuse.
+brand (dark ground, pink accent, Poppins), with its script, plates, scenes and the palette
+and stylesheet to reuse.
 
 ## What you need
 
@@ -28,9 +29,11 @@ brand (dark ground, pink accent, Poppins), with its fact sheet and the palette t
 - An ElevenLabs API key for the voice, music and any new sound marks. If
   `ELEVENLABS_API_KEY` is already in the environment, the scripts use it. Otherwise the
   requester runs `./scripts/set-elevenlabs-key.sh` in the film folder; it saves the key to
-  `.env` without echoing it. In a sandbox whose Node `fetch` gets 403s from ElevenLabs,
-  `export NODE_USE_ENV_PROXY=1` so Node uses the proxy. Never print, log or commit the key. Without a key, build the whole film on
-  placeholder timings (4 s a line) and stop before the voice, saying exactly what is missing.
+  `.env` without echoing it. If ElevenLabs answers 403 from a sandbox behind a proxy, try
+  `export NODE_USE_ENV_PROXY=1` so Node's `fetch` uses the proxy (the quirq infra film's
+  session needed it; the 2026-10-06 test run did not). Never print, log or commit the key.
+  Without a key, build the whole film on placeholder timings (4 s a line) and stop before
+  the voice, saying exactly what is missing.
 
 ## Defaults when the prompt is short
 
@@ -64,8 +67,8 @@ into the tree.
 
 The template ships a four-frame starter film so it builds out of the box. Before writing your
 own frames, delete its scenes (`src/scenes/*.mjs`) and its plate (`assets/plates/example.svg`,
-keep `src/example.mjs` as the pattern), because a leftover `03-the-idea.mjs` silently attaches
-to whatever your frame 03 is. Then:
+keep `assets/plates/src/example.mjs` as the pattern), because a leftover `03-the-idea.mjs`
+silently attaches to whatever your frame 03 is. Then:
 
 1. **Read the product.** Its README, docs, DESIGN.md or brand tokens, and the code paths
    behind each claim you might make. Run it if you can, and capture real screens at 2x with
@@ -83,9 +86,11 @@ to whatever your frame 03 is. Then:
 5. **Script and voice.** Write `src/script.mjs`: one line per frame, short, specific, never
    reading the screen aloud. Render it (`node scripts/voice.mjs`), then hear it back
    (`node scripts/stt-check.mjs`). Every word reported wrong gets a `SAY` respelling and a
-   re-take until the check is clean. Number words and digits already match. A brand that
+   re-take until the check is clean. Number words up to ninety-nine and digits already
+   match (larger numbers, ordinals and percent may still show as diffs). A brand that
    is right as spoken but spelled differently by the transcriber ("quirq" heard as
-   "quirk") goes in `ACCEPT` after you have listened to it once. `node src/film.mjs` now prints real timings.
+   "quirk") goes in `ACCEPT` after you have listened to it once. `node src/film.mjs` now
+   prints real timings.
 6. **Plates.** One generator per diagram in `assets/plates/src/` built on `lib.mjs`
    (`example.mjs` is the pattern): five layers (construction, main, detail, accent, labels),
    one labelled idea per plate, the accent on the thing the line names. Check each with
@@ -102,7 +107,8 @@ to whatever your frame 03 is. Then:
 9. **Gate.** `./scripts/finish.sh` then `npm run check` (runtime, layout, motion, contrast)
    must pass with 0 errors. Lint warnings are expected because the engine writes one
    generated composition on purpose: one `nested_structure_needs_subcomposition` per scene,
-   plus a few about file size, track density and the audio carve. Errors are not. The
+   plus a few about file size, track density, the audio carve, and a capture used twice
+   (`duplicate_media_discovery_risk`). Errors are not. The
    common ones and their fixes are in `src/ENGINE.md` under "When the gate fails".
 10. **Render and deliver.** `npx hyperframes@0.8.111 render --quality delivery -o
     renders/master.mp4`, then `node scripts/deliver.mjs renders/master.mp4 --to <folder>`
@@ -112,7 +118,8 @@ to whatever your frame 03 is. Then:
 A delivery render is slow: about 2 frames a second on a software GPU, so a 60 s film
 (1,800 frames) takes about 15 minutes. Start it in the background with its output going to a
 log, and keep working. It is finished when the process exits 0 and the log's last line names
-the MP4. Use `--quality standard` for a quick review cut.
+the MP4. The quality setting changes the encode, not the frame capture, so no quality is
+much faster; for a quick look use `frame.mjs` sheets of the built `index.html`.
 
 ## Before you call it done
 
