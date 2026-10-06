@@ -7,8 +7,8 @@ export default {
   css: `
 #s04 .wm { position: absolute; left: 0; right: 0; top: 300px; height: 240px; }
 #s04 .wm svg { width: 100%; height: 100%; overflow: visible; }
-#s04 .wm text { font-family: "Instrument Serif", serif; font-size: 200px; fill: var(--ink); stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: 2400; paint-order: stroke; }
-#s04 .tag { position: absolute; left: 0; right: 0; top: 590px; display: flex; justify-content: center; gap: 22px; font: italic 400 46px/1.2 Newsreader, Georgia, serif; color: var(--ink2); }
+#s04 .wm text { font-family: var(--display); font-weight: var(--display-w); font-size: 200px; fill: var(--ink); stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: 2400; paint-order: stroke; }
+#s04 .tag { position: absolute; left: 0; right: 0; top: 590px; display: flex; justify-content: center; gap: 22px; font: italic var(--serif-w) 46px/1.2 var(--serif); color: var(--ink2); }
 #s04 .tag .dot { color: var(--muted); font-style: normal; }
 `,
   html() {

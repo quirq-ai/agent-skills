@@ -28,7 +28,7 @@ export const FRAMES = [
   { id: "05", name: "Presubmit", ch: 1, plate: "presubmit", fig: 2, counter: ["REQUIRED CHECKS", 2] },
   { id: "06", name: "Gate and queue", ch: 1, plate: "queue", fig: 3, counter: ["REQUIRED CHECKS", 2] },
   { id: "07", name: "Last known good", ch: 1, plate: "lkgr", fig: 4, counter: ["REQUIRED CHECKS", 2] },
-  { id: "08", name: "Channels", ch: 1, plate: "channels", fig: 5, counter: ["CANARIES SHIPPED", 2], hold: 0.6 },
+  { id: "08", name: "Channels", ch: 1, plate: "channels", fig: 5, counter: ["CANARIES BUILT", 2], hold: 0.6 },
   { id: "09", name: "Chapter II", ch: 2, card: true },
   { id: "10", name: "The gardener", ch: 2, plate: "gardener", fig: 6, counter: ["REVERT CAP / DAY", 10], lead: 0.6 },
   { id: "11", name: "Rollers and perf", ch: 2, fig: 7, counter: ["PERF RECORDS", 30] },
@@ -36,8 +36,8 @@ export const FRAMES = [
   { id: "13", name: "The map", ch: 2, plate: "map", fig: 9, counter: ["INFRA REPOS", 13], hold: 0.8 },
   { id: "14", name: "Chapter III", ch: 3, card: true },
   { id: "15", name: "Getting started", ch: 3, fig: 10, counter: ["TOOLCHAINS", 2], lead: 0.5 },
-  { id: "16", name: "The edges", ch: 3, fig: 11, counter: ["CANARIES SHIPPED", 2], tail: 0.5 },
-  { id: "17", name: "The alpha", ch: 3, fig: 12, counter: ["CANARIES SHIPPED", 2] },
+  { id: "16", name: "The edges", ch: 3, fig: 11, counter: ["CANARIES BUILT", 2], tail: 0.5 },
+  { id: "17", name: "The alpha", ch: 3, fig: 12, counter: ["CANARIES BUILT", 2] },
   { id: "18", name: "Close", ch: 4, counter: ["INFRA REPOS", 13], lead: 1.0, hold: 3.0 },
 ];
 

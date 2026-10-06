@@ -169,7 +169,7 @@ function dial(L, cx, cy, r, handDeg) {
 {
   const L = layers();
   const rows = [
-    { y: 150, k: "CANARY", n: "scheduled daily at 06:17 UTC", m: "build · full tests · fuzz smoke · deploy · probe", live: true },
+    { y: 150, k: "CANARY", n: "daily at 06:17 UTC, for agents and test environments", m: "build · full tests · fuzz smoke · trial deploy on the CI runner", live: true },
     { y: 370, k: "DEV", n: "a human owner, after 24 h and 3 green canaries", m: "later (v1)" },
     { y: 590, k: "STABLE", n: "suraj, after 72 h, rolled out 10 / 50 / 100 %", m: "later (v2)" },
   ];
@@ -239,7 +239,7 @@ function dial(L, cx, cy, r, handDeg) {
   const gate = box(250, t2y, 160, "gate", "what must pass");
   const gard = box(560, t2y, 200, "gardener", "keeps main green");
   const rel = box(870, t2y, 180, "release", "lkgr and canary");
-  const inst = box(1160, t2y, 200, "installer", "follow a channel");
+  const inst = box(1160, t2y, 200, "installer", "main today, channels later");
   const roll = box(1460, t2y, 180, "rollers", "fresh dependencies");
   const t3y = 470;
   const depot = box(170, t3y, 150, "depot", "the qq command");

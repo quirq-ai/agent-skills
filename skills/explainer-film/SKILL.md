@@ -1,6 +1,6 @@
 ---
 name: explainer-film
-description: Make a narrated explainer film (1 to 3 minutes, 1080p MP4 with captions) for a product, repo or feature from one prompt, in the engraved-plate style of the Innernet field guide film. Use when asked for an explainer video, a product walkthrough film, or "a video like the Innernet one".
+description: Make a narrated explainer film (1 to 3 minutes, 1080p MP4 with captions) for a product, repo or feature from one prompt, in the engraved-plate style of the Innernet field guide and quirq infra films. Use when asked for an explainer video, a product walkthrough film, "a video like the Innernet one" or "a film like the quirq infra one".
 ---
 
 # Explainer film
@@ -14,24 +14,34 @@ It is the Innernet field guide film (quirq-ai/innernet, `film/`) made reusable. 
 from that film is in `template/`; the craft lessons are in `references/craft.md`; the
 reference film's brief, storyboard, script and scenes are in `references/examples/innernet/`.
 `references/examples/quirq-infra/` is a second film made with the same engine in the quirq
-brand (dark ground, pink accent, Poppins), with its script, plates, scenes and the palette
-and stylesheet to reuse.
+brand, with its script, plates and scenes.
+
+The template has two looks, picked by `THEME` in `src/film.mjs`: `quirq` (the default: the
+quirq infra film's dark ground, pink accent and Poppins) and `paper` (the Innernet film's
+warm paper and serif faces). Keep `quirq` for quirq products; for anyone else's product use
+whichever sits closer to its brand and take `PALETTE` from its design tokens.
 
 ## What you need
 
-- Node 22+, `ffmpeg` and `ffprobe`, and a headless Chrome (Playwright's, or set `CHROME`).
-- HyperFrames, run through `npx hyperframes@0.8.111` (pinned so renders repeat). The engine
-  emits a HyperFrames composition. Its agent skills (`npx hyperframes skills update`, which
-  installs `/hyperframes`, `/hyperframes-core` and others) are useful reference for the
-  composition contract, but this skill wins where they disagree: keep the 0.8.111 pin
-  (ignore "bump it" notices from `check`), skip their usage check and intent interview, and
-  follow `src/ENGINE.md` for scenes.
+- Node 22+, `ffmpeg` and `ffprobe`, `curl`, and a headless Chrome. Set `CHROME` for the
+  capture and frame scripts, and `HYPERFRAMES_BROWSER_PATH` to the same binary, or the
+  HyperFrames CLI downloads Chrome for Testing on first render.
+- HyperFrames 0.8.111, installed by `npm install` and run through the `npm run` scripts
+  (`lint`, `check`, `render`), which pin it so renders repeat and set
+  `HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1` so the CLI sends no usage data. Calling it
+  directly, use `npx hyperframes@0.8.111` with both variables exported. The engine emits a
+  HyperFrames composition; where HyperFrames' own guidance (in the film's `AGENTS.md`)
+  disagrees with this skill, this skill wins: keep the pin (ignore "bump it" notices from
+  `check`), skip its usage check and intent interview, and follow `src/ENGINE.md` for scenes.
+- Network: a run contacts `registry.npmjs.org` (install), `api.elevenlabs.io` (voice, music,
+  sound marks, the hearing check) and the product's own URL for captures. It never publishes
+  anything.
 - An ElevenLabs API key for the voice, music and any new sound marks. If
   `ELEVENLABS_API_KEY` is already in the environment, the scripts use it. Otherwise the
   requester runs `./scripts/set-elevenlabs-key.sh` in the film folder; it saves the key to
-  `.env` without echoing it. If ElevenLabs answers 403 from a sandbox behind a proxy, try
-  `export NODE_USE_ENV_PROXY=1` so Node's `fetch` uses the proxy (the quirq infra film's
-  session needed it; the 2026-10-06 test run did not). Never print, log or commit the key.
+  `.env` without echoing it. If ElevenLabs calls fail behind a proxy, try
+  `export NODE_USE_ENV_PROXY=1` so Node's `fetch` uses the proxy (untested here: the
+  2026-10-06 test run did not need it). Never print, log or commit the key.
   Without a key, build the whole film on placeholder timings (4 s a line) and stop before
   the voice, saying exactly what is missing.
 
@@ -71,7 +81,8 @@ keep `assets/plates/src/example.mjs` as the pattern), because a leftover `03-the
 silently attaches to whatever your frame 03 is. Then:
 
 1. **Read the product.** Its README, docs, DESIGN.md or brand tokens, and the code paths
-   behind each claim you might make. Run it if you can, and capture real screens at 2x with
+   behind each claim you might make. When the product has a deployed URL, capture that;
+   otherwise run it if you can. Capture real screens at 2x with
    `node scripts/capture.mjs <url> <name>` (writes `assets/captures/<name>@2x.png` and a 1x
    copy). Never mock the product's UI.
 2. **Brief.** Fill `BRIEF.md`: the one-sentence message, audience, chapters, the
@@ -81,7 +92,7 @@ silently attaches to whatever your frame 03 is. Then:
    label are checked against this file, never against memory.
 4. **Storyboard.** Write `STORYBOARD.md`, one block per frame (scene, duration, line, what
    moves on which word, what the frame must not be), and fill `src/film.mjs` (brand,
-   palette from the product's tokens, HUD devices, chapters, frames). If the requester is
+   theme and palette, HUD devices, chapters, frames). If the requester is
    around, show them the plan before building scenes; otherwise go on and say so.
 5. **Script and voice.** Write `src/script.mjs`: one line per frame, short, specific, never
    reading the screen aloud. Render it (`node scripts/voice.mjs`), then hear it back
@@ -102,16 +113,18 @@ silently attaches to whatever your frame 03 is. Then:
 8. **Music and sound.** Write the plan in `src/music.mjs` (sections pinned to the cards and
    lines), then `node assets/audio/music/bed.mjs generate` once and `build` after every
    timing change. Repin every chunk's `to` to your own frame ids first: the shipped plan
-   points at the starter's frames 02 to 04. The eight sound marks ship ready; add a mark only
-   when a scene needs one.
+   points at the starter's frames 02 to 04. Generate the eight sound marks once with
+   `node assets/audio/sfx/sfx.mjs generate && node assets/audio/sfx/sfx.mjs build` (eight
+   short ElevenLabs calls), listen to each, and regenerate any that sound wrong (the header
+   of `sfx.mjs` says how). Add a mark only when a scene needs one.
 9. **Gate.** `./scripts/finish.sh` then `npm run check` (runtime, layout, motion, contrast)
    must pass with 0 errors. Lint warnings are expected because the engine writes one
    generated composition on purpose: one `nested_structure_needs_subcomposition` per scene,
    plus a few about file size, track density, the audio carve, and a capture used twice
    (`duplicate_media_discovery_risk`). Errors are not. The
    common ones and their fixes are in `src/ENGINE.md` under "When the gate fails".
-10. **Render and deliver.** `npx hyperframes@0.8.111 render --quality delivery -o
-    renders/master.mp4`, then `node scripts/deliver.mjs renders/master.mp4 --to <folder>`
+10. **Render and deliver.** `npm run render -- --quality delivery -o renders/master.mp4`,
+    then `node scripts/deliver.mjs renders/master.mp4 --to <folder>`
     for the web copy, captions and poster. Commit the film's sources, never `renders/`,
     `previews/`, `.env` or `node_modules/`.
 

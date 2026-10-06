@@ -1,12 +1,17 @@
-// Sound marks for the film. The eight below ship ready (cut from the Innernet field guide
-// film's takes), so most films only add a mark when a scene calls for a new sound.
+// Sound marks for the film. None ship with the skill: each film generates its own with the
+// user's ElevenLabs key (eight calls, one take per mark), then listens and retunes by ear.
 //
 //   node assets/audio/sfx/sfx.mjs generate [name ...]   render takes into sfx/takes/ (ElevenLabs, costs credits; TAKES=n env)
 //   node assets/audio/sfx/sfx.mjs build                 cut the picked take of each mark into sfx/<name>.mp3
 //
+// A take that sounds wrong: generate it again (TAKES=3 node ... generate bell), set `take` to the
+// best one, and rebuild. `rate` retunes a take (e.g. 1760 / measuredHz to land a chime on A6),
+// `keep` drops a second hit, `gate` trims to the first transient, `flipRight` repairs a take whose
+// right channel is polarity inverted.
+//
 // build trims the leading silence (keeping a few ms of pre roll), cuts to the mark's length with
 // a short fade so nothing clicks, and normalises the sample peak to -6 dBFS. Reads
-// ELEVENLABS_API_KEY from .env and never prints it.
+// ELEVENLABS_API_KEY from the environment or .env and never prints it.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -18,7 +23,7 @@ const root = path.resolve(here, "../../..");
 const TAKES = path.join(here, "takes");
 const SR = 44100;
 const PEAK_DB = -6;
-const TAKE_COUNT = Number(process.env.TAKES || 2);
+const TAKE_COUNT = Number(process.env.TAKES || 1);
 
 // take: which rendered take build uses (1-based). seconds: the final length. vol: the mark's
 // default level in the mix (a scene's sfx() can override it per cue).
@@ -26,7 +31,7 @@ export const MARKS = {
   pencil: {
     vol: 0.25,
     seconds: 1.6,
-    take: 2,
+    take: 1,
     fadeIn: 0.05,
     use: "plate line work drawing on",
     text: "a single soft graphite pencil line drawn slowly across thick textured paper, close and intimate, quiet, dry room, no other sounds",
@@ -35,8 +40,6 @@ export const MARKS = {
     vol: 0.4,
     seconds: 2.5,
     take: 1,
-    // Take 1 rings at G#6 (1662 Hz), a tritone against the bed's D major; tune it to A6.
-    rate: 1760 / 1662.2,
     fade: 0.9,
     use: "chapter cards",
     text: "a single soft distant chime, one small bell struck gently, warm and pure, long gentle decay, calm, no music",
@@ -44,7 +47,7 @@ export const MARKS = {
   keys: {
     vol: 0.4,
     seconds: 1.4,
-    take: 2,
+    take: 1,
     use: "typing a query or a command",
     text: "four quiet mechanical keyboard keystrokes, soft and unhurried, close, dry room, no other sounds",
   },
@@ -59,17 +62,15 @@ export const MARKS = {
     vol: 0.45,
     seconds: 0.9,
     take: 1,
-    // Take 1 is one low thump, then a second tap at 0.42 s; keep the first only. Its right
-    // channel is polarity inverted (L/R correlation -0.87), which hollows it out and cancels in mono.
+    // Takes often land a second tap; keep the first hit only.
     keep: 0.4,
-    flipRight: true,
     use: "a stamp or seal landing (a promise kept, the close)",
     text: "a single soft muffled thud, a rubber stamp pressed firmly onto paper on a wooden desk, one low gentle impact, close and dry, nothing else",
   },
   page: {
     vol: 0.25,
     seconds: 1.0,
-    take: 2,
+    take: 1,
     fadeIn: 0.06,
     use: "camera pans across the sheet",
     text: "a single sheet of paper sliding softly across a wooden desk, quick and gentle, no crinkle",
@@ -78,7 +79,7 @@ export const MARKS = {
     vol: 0.35,
     seconds: 0.25,
     take: 1,
-    // Every take holds several ticks over a floor 33 dB down; gate on the first tick, keep only it.
+    // Takes usually hold several ticks; gate on the first one and keep only it.
     gate: -15,
     keep: 0.1,
     use: "the HUD counter ticking once",
@@ -96,8 +97,8 @@ export const MARKS = {
 function key() {
   const envFile = path.join(root, ".env");
   const env = fs.existsSync(envFile) ? fs.readFileSync(envFile, "utf8") : "";
-  const k = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim();
-  if (!k) throw new Error("No ELEVENLABS_API_KEY in .env");
+  const k = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim().replace(/^(["'])(.*)\1$/, "$2");
+  if (!k) throw new Error("No ELEVENLABS_API_KEY: export it, or run ./scripts/set-elevenlabs-key.sh");
   return k;
 }
 
@@ -178,7 +179,6 @@ function build() {
     const src = path.join(TAKES, `${name}-${m.take}.mp3`);
     const out = path.join(here, `${name}.mp3`);
     if (!fs.existsSync(src)) {
-      if (fs.existsSync(out)) continue; // a shipped mark, no takes to cut from
       throw new Error(`missing ${path.relative(root, src)}; run generate ${name}`);
     }
     const { lead } = cut(src, m.seconds, out, { rate: m.rate, keep: m.keep, fade: m.fade, fadeIn: m.fadeIn, gate: m.gate, flipRight: m.flipRight });

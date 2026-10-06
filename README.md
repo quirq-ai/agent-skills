@@ -6,7 +6,7 @@ beside it: templates, scripts, references.
 
 | Skill | What it does |
 | --- | --- |
-| [explainer-film](skills/explainer-film/SKILL.md) | A narrated 1 to 3 minute explainer film for a product, repo or feature, in the engraved-plate style of the Innernet field guide film |
+| [explainer-film](skills/explainer-film/SKILL.md) | A narrated 1 to 3 minute explainer film for a product, repo or feature, in the engraved-plate style of the Innernet field guide and quirq infra films |
 
 ## Use a skill
 
@@ -25,3 +25,7 @@ Then ask for the job in plain words, for example "make an explainer film for thi
 One folder per skill, named like its `name:` in `SKILL.md`. Keep `SKILL.md` short and move
 depth into `references/`. Never commit secrets: a skill that needs an API key reads it from
 the user's environment or a gitignored `.env`.
+
+## License
+
+Apache-2.0 (`LICENSE`). Third-party material a skill uses is listed in its own `ASSETS.md`.

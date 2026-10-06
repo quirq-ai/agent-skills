@@ -83,7 +83,7 @@ scenes are in `examples/innernet/`.
 
 ## Delivery
 
-- The gate is `npx hyperframes check` (runtime, layout, motion, contrast). Then render at
+- The gate is `npm run check` (runtime, layout, motion, contrast). Then render at
   delivery quality and make the web copy: H.264 CRF 24, loudness at -16 LUFS, WebVTT
   captions in the film's own phrasing, a poster from a plate frame.
 - Sign the film at the close (Innernet ended on "Made by QuirqAI" with the quirq mark).

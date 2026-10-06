@@ -44,6 +44,8 @@ if (sheet && outs.length) {
   const pad = Array.from({ length: cols * rows - outs.length }, (_, i) => `color=c=#e9e6df:s=640x360:d=1[p${i}]`).join(";");
   const all = [...outs.map((_, i) => `[v${i}]`), ...Array.from({ length: cols * rows - outs.length }, (_, i) => `[p${i}]`)].join("");
   const layout = Array.from({ length: cols * rows }, (_, i) => `${(i % cols) * 640}_${Math.floor(i / cols) * 360}`).join("|");
-  execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...inputs, "-filter_complex", `${scaled}${pad ? ";" + pad : ""};${all}xstack=inputs=${cols * rows}:layout=${layout}`, "-frames:v", "1", sheet]);
+  // xstack needs two inputs; a one-frame sheet is just that frame scaled down.
+  if (outs.length === 1) execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...inputs, "-vf", "scale=640:-1", "-frames:v", "1", sheet]);
+  else execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...inputs, "-filter_complex", `${scaled}${pad ? ";" + pad : ""};${all}xstack=inputs=${cols * rows}:layout=${layout}`, "-frames:v", "1", sheet]);
   console.log(sheet);
 }

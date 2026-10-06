@@ -10,7 +10,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { MARKS } from "../assets/audio/sfx/sfx.mjs";
-import { BRAND, CHAPTERS, H, HUD, PALETTE, SEAMS, W, timing } from "./film.mjs";
+import { BRAND, CHAPTERS, H, HUD, PALETTE, SEAMS, THEME, W, timing } from "./film.mjs";
+import { fontFaces } from "./themes/index.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const rel = (p) => path.join(ROOT, p);
@@ -161,16 +162,9 @@ const hud = `<div id="hud" class="layer">
 
 // ------------------------------------------------------------------ page
 const DATA = { total, segs, cuts, ruler: RULER, palette: PALETTE, chapters: CHAPTERS.map(({ n, roman, word }) => ({ n, roman, word })) };
-const fonts = [
-  ["Instrument Serif", "instrument-serif-normal-400.woff2", "normal", "400"],
-  ["Instrument Serif", "instrument-serif-italic-400.woff2", "italic", "400"],
-  ["Newsreader", "newsreader-normal-var.woff2", "normal", "200 800"],
-  ["Newsreader", "newsreader-italic-var.woff2", "italic", "200 800"],
-  ["Inter", "inter-normal-var.woff2", "normal", "100 900"],
-  ["JetBrains Mono", "jetbrains-mono-normal-var.woff2", "normal", "100 800"],
-].map(([f, file, st, w]) => `@font-face{font-family:"${f}";src:url("assets/fonts/${file}") format("woff2");font-style:${st};font-weight:${w};font-display:block}`).join("\n");
+const fonts = fontFaces();
 
-const STYLE = fs.readFileSync(rel("src/film.css"), "utf8");
+const STYLE = fs.readFileSync(rel("src/film.css"), "utf8") + "\n" + fs.readFileSync(rel(`src/themes/${THEME}.css`), "utf8");
 const html = `<!doctype html>
 <html lang="en">
   <head>

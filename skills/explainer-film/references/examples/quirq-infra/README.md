@@ -24,25 +24,18 @@ their choices, then write the same thing through the template's `src/film.mjs`.
 
 ## The quirq brand in the template
 
-To give a new film this look, set these in `src/film.mjs` (taken from the film's runtime and
-xo-space's quirq theme):
+The template's default theme is this film's look: `THEME = "quirq"` in `src/film.mjs` takes
+the film's palette (plum-black ground, pink accent, amber in the night chapter) from
+`src/themes/index.mjs`, and `src/themes/quirq.css` carries the dark-ground aurora, vignette, screen-blended grain, mount
+shadows, chapter-card ghost and Poppins faces. So a new quirq film needs no CSS work; this
+folder's `film.css` is the original the theme was taken from. The wordmark is
+`public/brand/quirq/wordmark.svg` in quirq-ai/innernet; copy it unchanged. Check contrast
+after any palette change (`npm run check`).
 
-```js
-export const PALETTE = {
-  day: { bg: [16, 15, 20], ink: [243, 236, 228], ink2: [208, 195, 204], muted: [177, 162, 180], link: [242, 162, 213], surface: [25, 22, 30] },
-  night: { bg: [11, 10, 14], ink: [243, 236, 228], ink2: [208, 195, 204], muted: [177, 162, 180], link: [234, 193, 122], surface: [23, 20, 27] },
-};
-```
+## Corrections after the render
 
-Both palettes are dark, so the night chapter changes only the accent (pink to amber) and
-deepens the ground. The palette alone is not enough: the template's `film.css` is tuned for a
-paper ground (warm aurora tints, light shadows, grain multiplied in). Take the dark-ground
-rules from this folder's `film.css`: the aurora colours and opacity, `#vig`, `#grain` (screen
-blend), `.mount` shadows, `.card-ghost`, and the `html, body` background. Then the fonts. The template's `film.css` uses Instrument Serif, Newsreader and Inter;
-the quirq film swapped the display and serif faces for Poppins (300 to 600, plus 300
-italic), which needs the `@fontsource/poppins` package, its files added to
-`scripts/setup.mjs`, and the font names changed in `src/film.css`, `src/build.mjs`,
-`scripts/plate-preview.mjs` and the inline `font-family` names in
-`assets/plates/src/lib.mjs`. The
-wordmark is `public/brand/quirq/wordmark.svg` in quirq-ai/innernet; copy it unchanged.
-Check contrast after any palette change (`npm run check`).
+The script, film table and plates here were corrected after the film was rendered, so the
+rendered film predates them. Canary is described as built and tested for agents and test
+environments (people still install from main), the HUD counter reads CANARIES BUILT, the
+channels plate says the trial deploy runs on the CI runner, the installer is labelled "main
+today, channels later", and agents propose reverts rather than make them.

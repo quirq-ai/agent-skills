@@ -7,8 +7,8 @@ export default {
 #s01 .field { position: absolute; left: 110px; right: 110px; top: 220px; height: 560px; }
 #s01 .field svg { width: 100%; height: 100%; overflow: visible; }
 #s01 .field path { stroke: var(--con); stroke-width: 1.4; fill: none; }
-#s01 .title { position: absolute; left: 0; right: 0; top: 360px; text-align: center; font: 400 150px/1 "Instrument Serif", serif; color: var(--ink); }
-#s01 .line { position: absolute; left: 0; right: 0; top: 548px; text-align: center; font: italic 400 40px/1.2 Newsreader, Georgia, serif; color: var(--ink2); }
+#s01 .title { position: absolute; left: 0; right: 0; top: 360px; text-align: center; font: var(--display-w) 150px/1 var(--display); color: var(--ink); }
+#s01 .line { position: absolute; left: 0; right: 0; top: 548px; text-align: center; font: italic var(--serif-w) 40px/1.2 var(--serif); color: var(--ink2); }
 #s01 .rule { position: absolute; left: 760px; width: 400px; top: 528px; height: 2px; background: var(--ink); }
 `,
   html() {

@@ -39,10 +39,10 @@ export const mono = (x, y, s, { anchor = "start", size = 18, ls = 2, weight } = 
   `<text ${attrs({ x, y, "text-anchor": anchor, "font-size": size, "letter-spacing": ls, "font-weight": weight })} class="mono" font-family="JetBrains Mono, ui-monospace, monospace" fill="currentColor">${esc(s)}</text>`;
 /** Italic serif annotation. */
 export const note = (x, y, s, { anchor = "start", size = 24 } = {}) =>
-  `<text ${attrs({ x, y, "text-anchor": anchor, "font-size": size })} class="serif-i" font-family="Newsreader, Georgia, serif" font-style="italic" fill="currentColor">${esc(s)}</text>`;
-/** Display serif (Instrument Serif) for numerals and plate titles. */
+  `<text ${attrs({ x, y, "text-anchor": anchor, "font-size": size })} class="serif-i" font-family="Newsreader, serif" font-style="italic" fill="currentColor">${esc(s)}</text>`;
+/** Display face for numerals and plate titles (the film's theme sets it; Instrument Serif standalone). */
 export const display = (x, y, s, { anchor = "start", size = 64 } = {}) =>
-  `<text ${attrs({ x, y, "text-anchor": anchor, "font-size": size })} class="display" font-family="Instrument Serif, Georgia, serif" fill="currentColor">${esc(s)}</text>`;
+  `<text ${attrs({ x, y, "text-anchor": anchor, "font-size": size })} class="display" font-family="Instrument Serif, serif" fill="currentColor">${esc(s)}</text>`;
 
 /** Dash-dot centre line as one path. */
 export function centreLine(x1, y1, x2, y2, pat = [26, 6, 4, 6]) {

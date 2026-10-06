@@ -13,7 +13,7 @@
 // API: when the narration changes and the events move, it time-stretches each raw chunk to its
 // new length (pitch kept), so the swells stay on the turns. Then it carves the bed under the
 // voice (a gentle dip in the speech band, a soft duck under each line, a lift on each card),
-// fades it, and sets it to -20 LUFS integrated. Reads ELEVENLABS_API_KEY from .env and never
+// fades it, and sets it to -20 LUFS integrated. Reads ELEVENLABS_API_KEY from the environment or .env and never
 // prints it.
 
 import fs from "node:fs";
@@ -75,8 +75,8 @@ function windowWeight(t, a, b, rampIn, rampOut) {
 function key() {
   const envFile = path.join(root, ".env");
   const env = fs.existsSync(envFile) ? fs.readFileSync(envFile, "utf8") : "";
-  const k = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim();
-  if (!k) throw new Error("No ELEVENLABS_API_KEY in .env");
+  const k = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim().replace(/^(["'])(.*)\1$/, "$2");
+  if (!k) throw new Error("No ELEVENLABS_API_KEY: export it, or run ./scripts/set-elevenlabs-key.sh");
   return k;
 }
 
@@ -261,10 +261,11 @@ async function manifest() {
     const r = spawnSync("ffmpeg", ["-hide_banner", "-nostats", "-i", file, "-af", "astats=measure_perchannel=none", "-f", "null", "-"], { encoding: "utf8" }).stderr;
     return { peak: Number(r.match(/Peak level dB:\s+(-?[\d.]+)/)?.[1]), rms: Number(r.match(/RMS level dB:\s+(-?[\d.]+)/)?.[1]) };
   };
-    const VOL = Object.fromEntries(Object.entries(MARKS).map(([n, mk]) => [n, mk.vol ?? 0.3]));
+  const VOL = Object.fromEntries(Object.entries(MARKS).map(([n, mk]) => [n, mk.vol ?? 0.3]));
   const sfx = {};
   for (const [name, mk] of Object.entries(MARKS)) {
     const f = path.join(here, "../sfx", `${name}.mp3`);
+    if (!fs.existsSync(f)) continue; // not generated yet: build.mjs skips its cues
     const { peak, rms } = peakRms(f);
     sfx[name] = { file: rel(f), duration: +probe(f).toFixed(3), peak_dbfs: +peak.toFixed(1), rms_db: +rms.toFixed(1), use: mk.use };
   }

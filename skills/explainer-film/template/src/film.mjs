@@ -7,6 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { THEMES } from "./themes/index.mjs";
 
 export const W = 1920;
 export const H = 1080;
@@ -21,13 +22,12 @@ export const BRAND = {
   slug: "product-explainer",
 };
 
-// Day and night palettes (RGB). The runtime blends every colour token between them: paper
-// by day, ink at night (the night chapter falls at dusk and the close returns at dawn).
-// Take these from the product's own design tokens. `link` is the one saturated accent.
-export const PALETTE = {
-  day: { bg: [247, 245, 240], ink: [28, 27, 24], ink2: [70, 67, 60], muted: [95, 90, 82], link: [42, 82, 196], surface: [255, 254, 251] },
-  night: { bg: [15, 15, 14], ink: [236, 234, 227], ink2: [200, 197, 187], muted: [162, 157, 146], link: [157, 182, 255], surface: [26, 26, 24] },
-};
+// The look: "quirq" (dark ground, pink accent, Poppins) or "paper" (the Innernet field
+// guide). See src/themes/index.mjs. PALETTE holds the day and night colours (RGB) the runtime
+// blends between; the night chapter falls at dusk and the close returns at dawn. To match a
+// product's own design tokens, replace PALETTE with them (`link` is the one saturated accent).
+export const THEME = "quirq";
+export const PALETTE = THEMES[THEME].palette;
 
 // The HUD's top-right devices. `counter: true` shows a running index (each frame's
 // `counter: [LABEL, value]`). `badge` is an optional pill under it that carries the film's

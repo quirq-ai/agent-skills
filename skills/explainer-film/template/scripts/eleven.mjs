@@ -1,4 +1,4 @@
-// Small ElevenLabs client for the film. Reads ELEVENLABS_API_KEY from .env and never
+// Small ElevenLabs client for the film. Reads ELEVENLABS_API_KEY from the environment or .env and never
 // prints it.
 //
 //   node scripts/eleven.mjs voices                      list voices (name, labels, id)
@@ -12,9 +12,9 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const env = fs.existsSync(path.join(root, ".env")) ? fs.readFileSync(path.join(root, ".env"), "utf8") : "";
-const KEY = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim();
+const KEY = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim().replace(/^(["'])(.*)\1$/, "$2");
 if (!KEY) {
-  console.error("No ELEVENLABS_API_KEY in .env");
+  console.error("No ELEVENLABS_API_KEY: export it, or run ./scripts/set-elevenlabs-key.sh");
   process.exit(1);
 }
 const API = "https://api.elevenlabs.io";
@@ -55,7 +55,7 @@ if (isMain) try {
     const { voices } = await res.json();
     for (const v of voices) {
       const l = v.labels || {};
-      console.log([v.name, v.voice_id, v.category, l.gender, l.age, l.accent, l.descriptive || l.description, l.use_case || l.use_case].filter(Boolean).join(" | "), v.description ? `:: ${v.description.slice(0, 120)}` : "");
+      console.log([v.name, v.voice_id, v.category, l.gender, l.age, l.accent, l.descriptive || l.description, l.use_case].filter(Boolean).join(" | "), v.description ? `:: ${v.description.slice(0, 120)}` : "");
     }
   } else if (cmd === "tts") {
     const [voiceId, textArg, out, ts] = rest;

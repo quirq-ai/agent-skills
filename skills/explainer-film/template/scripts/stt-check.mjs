@@ -18,9 +18,9 @@ let ACCEPT = script.ACCEPT ?? [];
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const envFile = path.join(root, ".env");
 const env = fs.existsSync(envFile) ? fs.readFileSync(envFile, "utf8") : "";
-const KEY = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim();
+const KEY = process.env.ELEVENLABS_API_KEY || env.match(/^ELEVENLABS_API_KEY=(.+)$/m)?.[1]?.trim().replace(/^(["'])(.*)\1$/, "$2");
 if (!KEY) {
-  console.error("No ELEVENLABS_API_KEY in .env (run scripts/set-elevenlabs-key.sh)");
+  console.error("No ELEVENLABS_API_KEY: export it, or run ./scripts/set-elevenlabs-key.sh");
   process.exit(1);
 }
 const only = process.argv.slice(2);

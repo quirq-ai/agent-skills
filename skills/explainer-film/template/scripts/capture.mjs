@@ -29,7 +29,7 @@ const di = args.indexOf("--dark");
 const dark = di >= 0 && !!args.splice(di, 1);
 const [url, name] = args;
 if (!url || !name || !(w > 0 && h > 0 && scale > 0)) {
-  console.error("usage: node scripts/capture.mjs <url> <name> [--size 1600x1000] [--scale 2] [--wait 4000]");
+  console.error("usage: node scripts/capture.mjs <url> <name> [--size 1600x1000] [--scale 2] [--wait 4000] [--dark]");
   process.exit(1);
 }
 const dir = path.join(root, "assets/captures");

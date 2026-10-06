@@ -20,7 +20,8 @@ mv .env.tmp .env
 chmod 600 .env
 echo "Saved to $(pwd)/.env"
 
-code=$(curl -s -o /dev/null -w '%{http_code}' -H "xi-api-key: $key" "https://api.elevenlabs.io/v1/voices?page_size=1" || echo 000)
+# The header goes in on stdin, so the key never appears in the process list.
+code=$(printf 'xi-api-key: %s\n' "$key" | curl -s -o /dev/null -w '%{http_code}' -H @- "https://api.elevenlabs.io/v1/voices?page_size=1" || echo 000)
 case "$code" in
   200) echo "Key works. You can close this tab." ;;
   401) echo "ElevenLabs rejected this key (401). Run this again with the right one." ;;
