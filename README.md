@@ -6,6 +6,7 @@ beside it: templates, scripts, references.
 
 | Skill | What it does |
 | --- | --- |
+| [explainer-film](skills/explainer-film/SKILL.md) | A narrated 2 to 3 minute explainer film for a product, repo or feature, in the engraved-plate style of the Innernet field guide film |
 
 ## Use a skill
 
@@ -14,10 +15,10 @@ project). Copy or link the skill's folder there:
 
 ```bash
 git clone https://github.com/quirq-ai/agent-skills
-ln -s "$PWD/agent-skills/skills/<skill>" ~/.claude/skills/<skill>
+ln -s "$PWD/agent-skills/skills/explainer-film" ~/.claude/skills/explainer-film
 ```
 
-Then ask for the job in plain words.
+Then ask for the job in plain words, for example "make an explainer film for this repo".
 
 ## Add a skill
 
