@@ -120,7 +120,7 @@ silently attaches to whatever your frame 03 is. Then:
 9. **Gate.** `./scripts/finish.sh` then `npm run check` (runtime, layout, motion, contrast)
    must pass with 0 errors. Lint warnings are expected because the engine writes one
    generated composition on purpose: one `nested_structure_needs_subcomposition` per scene,
-   plus a few about file size, track density, the audio carve, and a capture used twice
+   plus a few about file size, track density, and a capture used twice
    (`duplicate_media_discovery_risk`). Errors are not. The
    common ones and their fixes are in `src/ENGINE.md` under "When the gate fails".
 10. **Render and deliver.** `npm run render -- --quality delivery -o renders/master.mp4`,

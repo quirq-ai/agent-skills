@@ -9,7 +9,7 @@ export default {
 #s01 .field path { stroke: var(--con); stroke-width: 1.4; fill: none; }
 #s01 .title { position: absolute; left: 0; right: 0; top: 360px; text-align: center; font: var(--display-w) 150px/1 var(--display); color: var(--ink); }
 #s01 .line { position: absolute; left: 0; right: 0; top: 548px; text-align: center; font: italic var(--serif-w) 40px/1.2 var(--serif); color: var(--ink2); }
-#s01 .rule { position: absolute; left: 760px; width: 400px; top: 528px; height: 2px; background: var(--ink); }
+#s01 .rule { position: absolute; left: 760px; width: 400px; top: 538px; height: 2px; background: var(--ink); }
 `,
   html() {
     const rows = Array.from({ length: 12 }, (_, i) => `<path pathLength="100" d="M0 ${i * 50}H1700"/>`).join("");

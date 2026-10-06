@@ -122,7 +122,7 @@ function dial(L, cx, cy, r, handDeg) {
     L.det.push(circle(x + 30, Y, 8), path_(`M${P(x + 50, Y - 14)}L${P(x + 108, Y - 14)}M${P(x + 50, Y + 6)}L${P(x + 96, Y + 6)}M${P(x + 50, Y + 24)}L${P(x + 84, Y + 24)}`));
   }
   L.lbl.push(mono(755, Y - 104, "MERGE QUEUE", { anchor: "middle", size: 22, ls: 6 }));
-  L.lbl.push(note(755, Y + 120, "re-tests the exact merge result", { anchor: "middle", size: 23 }));
+  L.lbl.push(note(755, Y + 120, "set to test the exact merge result", { anchor: "middle", size: 23 }));
   L.lbl.push(mono(755, Y + 158, "on: merge_group", { anchor: "middle", size: 16, ls: 1 }));
   // main
   const MY = Y;

@@ -17,7 +17,7 @@ export default {
 #s21 .wm svg { width: 100%; height: 100%; overflow: visible; }
 #s21 .wm text { font-family: "Instrument Serif", serif; font-size: 236px; fill: var(--ink); stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: 2400; paint-order: stroke; }
 #s21 .wm tspan.i { font-style: italic; }
-#s21 .tag { position: absolute; left: 0; right: 0; top: 560px; display: flex; justify-content: center; align-items: baseline; gap: 22px; font: italic 400 46px/1.2 Newsreader, Georgia, serif; color: var(--ink2); }
+#s21 .tag { position: absolute; left: 0; right: 0; top: 560px; display: flex; justify-content: center; align-items: baseline; gap: 22px; font: italic 400 46px/1.2 Newsreader, serif; color: var(--ink2); }
 #s21 .tag .dot { font-style: normal; color: var(--muted); }
 #s21 .url { position: absolute; left: 50%; top: 772px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 13px 26px 13px 22px; border: 2px solid var(--link); border-radius: 999px; font: 500 26px/1 "JetBrains Mono", monospace; letter-spacing: 1px; color: var(--link); background: var(--surface); white-space: nowrap; box-shadow: 0 18px 40px -24px rgba(28,27,24,.4); }
 #s21 .url svg { width: 21px; height: 25px; stroke: var(--link); stroke-width: 2.2; fill: none; overflow: visible; }
