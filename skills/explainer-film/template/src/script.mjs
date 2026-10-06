@@ -12,6 +12,11 @@ export const VOICE = { id: "pFZP5JQG7iQjIQuC4Bku", name: "Lily", model: "eleven_
 //   ["Innerpedia", "Innerr-pedia"], ["Innernet", "Inner-net"], ["README", "read me"]
 export const SAY = [];
 
+// Differences the hearing check (scripts/stt-check.mjs) may report that are right as spoken:
+// [written word, word the transcript wrote]. A respelled brand often lands here: "quirq"
+// said as "kwirk" comes back as "quirk". Listen to the line once before you add a pair.
+export const ACCEPT = [];
+
 /** The text the voice is given for a line. */
 export const spoken = (text) => SAY.reduce((t, [w, s]) => t.replace(new RegExp(`\\b${w}\\b`, "g"), s), text);
 

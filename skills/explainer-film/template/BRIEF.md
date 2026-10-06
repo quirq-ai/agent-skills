@@ -7,15 +7,15 @@ destination: embed
 aspect: 1920x1080
 language: en
 audience: <who watches, and what they already know>
-length: ~120s
+length: ~120s  # what the prompt asks; size the script with the rule in SKILL.md
 angle: field-guide walkthrough
 voice: elevenlabs:lily:pFZP5JQG7iQjIQuC4Bku
 ---
 
 ## Intent
 
-<What the film is for and where it plays. Name the chapters (three, about 40 seconds each,
-works well) and what each one shows.>
+<What the film is for and where it plays. Name the chapters and what each one shows: three
+of about 40 seconds for 2 to 3 minutes, one for about a minute.>
 
 User direction, verbatim: "<the request, quoted exactly>"
 

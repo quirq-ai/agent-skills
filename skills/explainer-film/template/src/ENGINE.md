@@ -29,6 +29,10 @@ Fonts: `display` (Instrument Serif), `serif` / `serif-i` (Newsreader), `mono`
 (JetBrains Mono), Inter for UI. Sizes are video sizes: display numerals 120 to 260px,
 titles 52 to 64px, lines 28 to 34px, mono labels 18 to 24px.
 
+A plate (1600x1000) mounted at its full scene width shows its 18 px labels at about 14 px.
+Mount it at least 1300 px wide so labels stay readable, and keep anything near the plate's
+bottom edge clear of the caption band once it is scaled.
+
 ## Module shape
 
 ```js
@@ -105,7 +109,8 @@ export default {
 - The plates' corner registration marks are tagged `.reg` at build time and hidden.
 
 Callouts over plates or screens: an absolutely positioned `<svg class="callouts">` with
-`<path pathLength="100">` lines (styled link blue by `film.css`) drawn with `k.draw`, and
+`<path pathLength="100">` lines (any stroked shape works: `ellipse`, `rect`, `polyline` and
+`polygon` are styled too, each with `pathLength="100"`) drawn with `k.draw`, and
 `<div class="callout-label">` labels faded in with `k.rise`. A real screen goes in a
 `<div class="mount">` (crop marks, hairline, shadow) with an `<img>`; move the camera on
 an inner wrapper, never on the mount's clip.
@@ -122,3 +127,18 @@ at the scene at its start (+0.3s), at the key word, and at its settled end (-0.4
 the absolute times from `node src/film.mjs`. Compare against the approved sketch for the
 frame in the storyboard: the confirmed layout is kept and dressed, never redrawn. Then run `npx hyperframes lint` from the project root (it reads
 `index.html`; rebuild it with `node src/build.mjs` first) and fix anything in your scenes.
+
+## When the gate fails
+
+`npm run check` reports errors by element. The ones a new film usually hits:
+
+- **content_overlap between a big serif title and a label above it**, even when the glyphs
+  do not touch. Instrument Serif's line box is taller than its glyphs, so leave 30 px or
+  more between a large title and the kicker or label above it, or lower the title's
+  `line-height`.
+- **Overlap you meant** (a pile of cards, a stamp over a page): put
+  `data-layout-allow-overlap` on each overlapping element itself. On a container it does
+  nothing.
+- **Contrast on `--muted`** (a HUD label at 4.41:1, say). The aurora tints the background, so
+  a product token that passes on its own flat page can fail here. Darken `PALETTE.day.muted`
+  (lighten `night.muted`) a few steps until it clears 4.5:1; never shrink the text instead.

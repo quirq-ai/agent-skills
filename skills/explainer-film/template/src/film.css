@@ -110,7 +110,7 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f7f5f
 
 /* Callouts drawn over a plate or screen. */
 .callouts { position: absolute; inset: 0; overflow: visible; }
-.callouts path, .callouts line, .callouts circle { stroke: var(--link); stroke-width: 2.2; fill: none; stroke-dasharray: 100 110; }
+.callouts path, .callouts line, .callouts circle, .callouts ellipse, .callouts rect, .callouts polyline, .callouts polygon { stroke: var(--link); stroke-width: 2.2; fill: none; stroke-dasharray: 100 110; }
 .callout-label { position: absolute; font: italic 400 29px/1.2 Newsreader, Georgia, serif; color: var(--link); white-space: nowrap; }
 
 .mono { font-family: "JetBrains Mono", monospace; }

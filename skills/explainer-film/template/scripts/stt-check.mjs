@@ -8,7 +8,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { LINES } from "../src/script.mjs";
+import * as script from "../src/script.mjs";
+
+const { LINES } = script;
+// Known-good differences: [written, heard] pairs that are right as spoken (a brand name the
+// transcriber spells its own way, "quirq" heard as "quirk"). Listen once before adding one.
+const ACCEPT = (script.ACCEPT ?? []).map(([w, h]) => [w.toLowerCase(), h.toLowerCase()]);
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const envFile = path.join(root, ".env");
@@ -20,7 +25,24 @@ if (!KEY) {
 }
 const only = process.argv.slice(2);
 const ids = Object.keys(LINES).filter((id) => !only.length || only.includes(id));
-const norm = (s) => s.toLowerCase().replace(/[^a-z0-9' ]+/g, " ").split(/\s+/).filter(Boolean);
+// Number words become digits on both sides ("thirty" and "30" match): the transcriber
+// writes digits.
+const UNITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function numbers(words) {
+  const out = [];
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i], u = UNITS.indexOf(w), t = TENS.indexOf(w);
+    if (t > 1) {
+      const next = UNITS.indexOf(words[i + 1] ?? "");
+      if (next > 0 && next < 10) { out.push(String(t * 10 + next)); i++; } else out.push(String(t * 10));
+    } else if (u >= 0) out.push(String(u));
+    else out.push(w);
+  }
+  return out;
+}
+const norm = (s) => numbers(s.toLowerCase().replace(/(\d),(\d)/g, "$1$2").replace(/-/g, " ").replace(/[^a-z0-9' ]+/g, " ").split(/\s+/).filter(Boolean));
+const accepted = (d) => ACCEPT.some(([w, h]) => w === d.said && h === d.heard);
 
 async function transcribe(file) {
   const form = new FormData();
@@ -58,11 +80,13 @@ function diff(a, b) {
 const report = {};
 await Promise.all(ids.map(async (id) => {
   const heard = await transcribe(path.join(root, "assets/audio/vo", `${id}.mp3`));
-  report[id] = { heard, diffs: diff(norm(LINES[id]), norm(heard)) };
+  report[id] = { heard, diffs: diff(norm(LINES[id]), norm(heard)).filter((d) => !accepted(d)) };
 }));
 for (const id of ids) {
   const r = report[id];
   console.log(`${id}  ${r.diffs.length ? r.diffs.map((d) => `"${d.said}" heard as "${d.heard}"`).join("; ") : "clean"}`);
 }
+const dirty = ids.filter((id) => report[id].diffs.length);
+console.log(dirty.length ? `${dirty.length} line(s) to fix: respell in SAY and re-take, or listen and add a known-good pair to ACCEPT` : "all clean");
 fs.mkdirSync(path.join(root, ".hyperframes"), { recursive: true });
 fs.writeFileSync(path.join(root, ".hyperframes/stt-report.json"), JSON.stringify(report, null, 2));

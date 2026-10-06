@@ -6,6 +6,7 @@ the explainer-film skill. Read `src/ENGINE.md` before writing a scene.
 ```bash
 npm install                     # fonts and GSAP into assets/ (run once)
 ./scripts/set-elevenlabs-key.sh # saves ELEVENLABS_API_KEY to .env without echoing it
+node scripts/capture.mjs <url> <name>  # a real product screen -> assets/captures/
 node scripts/voice.mjs          # narration (only changed lines)
 node scripts/stt-check.mjs      # hear it back: lists words that came out wrong
 node src/film.mjs               # the frame table with real timings
@@ -16,6 +17,7 @@ node assets/audio/music/bed.mjs generate && node assets/audio/music/bed.mjs buil
 ./scripts/finish.sh             # build index.html, carve the bed, lint
 npm run check                   # the gate: runtime, layout, motion, contrast
 npx hyperframes@0.8.111 render --quality delivery -o renders/master.mp4
+node scripts/contact.mjs renders/master.mp4   # contact sheet of the whole film
 node scripts/deliver.mjs renders/master.mp4 --to <page assets folder>
 ```
 
@@ -30,4 +32,4 @@ node scripts/deliver.mjs renders/master.mp4 --to <page assets folder>
 | `src/build.mjs`, `src/runtime.js`, `src/film.css`, `src/geo.js` | the engine |
 | `assets/plates/src/` | plate generators (`lib.mjs` is the engraving toolkit) |
 | `assets/audio/` | narration, the music bed, sound marks |
-| `scripts/` | voice, hearing check, frames, plate preview, finish, deliver |
+| `scripts/` | captures, voice, hearing check, frames, plate preview, finish, contact sheet, deliver |

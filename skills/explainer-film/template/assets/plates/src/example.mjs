@@ -43,6 +43,5 @@ lbl.push(mono(1240, 640, "WHAT COMES OUT", { anchor: "middle", size: 20, ls: 4 }
 const [ld, lx, ly] = leader(870, 420, 980, 300, 50);
 det.push(ld);
 lbl.push(note(lx, ly, "named on the key word", { size: 26 }));
-lbl.push(mono(800, 910, "FIG. 1 · REPLACE WITH THE REAL MECHANISM", { anchor: "middle", size: 16, ls: 3 }));
 
 writePlate("example", "The idea: what goes in, the one step, what comes out", { con, main, det, acc, lbl });

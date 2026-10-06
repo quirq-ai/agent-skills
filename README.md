@@ -6,7 +6,7 @@ beside it: templates, scripts, references.
 
 | Skill | What it does |
 | --- | --- |
-| [explainer-film](skills/explainer-film/SKILL.md) | A narrated 2 to 3 minute explainer film for a product, repo or feature, in the engraved-plate style of the Innernet field guide film |
+| [explainer-film](skills/explainer-film/SKILL.md) | A narrated 1 to 3 minute explainer film for a product, repo or feature, in the engraved-plate style of the Innernet field guide film |
 
 ## Use a skill
 
