@@ -59,8 +59,10 @@ export default {
     `wordmark` plus `cls`, 120 px tall; size it in the scene's CSS). It is for a one-colour
     logo whose colours are presentation attributes or inline styles: gradients and two-tone
     marks flatten to the ink, and masks and clip paths keep their own colours. It fails the
-    build if the file is missing, has a `<style>` block, or contains anything that can run
-    code (`<script>`, `<foreignObject>`, an `on*` handler, a `javascript:` URL).
+    build if the file is missing, has a `<style>` block, contains anything that can run code
+    or navigate (`<script>`, `<foreignObject>`, `<meta>`, `<iframe>`, `<object>`, `<embed>`,
+    `<base>`, an `on*` handler, a `javascript:` URL), or references a remote file (an `href`,
+    `src` or `url()` to `http:`, `https:` or `//`; `#id` and `data:` are fine).
   - `ctx.capture(name)` is the path of a real screen capture in `assets/captures/`.
     Capture the real product at 2x (3200 px wide for a 1600 px mount) and keep a 1x copy.
   - `ctx.cap(prefix, { big, unit, title, line })` the standard caption block

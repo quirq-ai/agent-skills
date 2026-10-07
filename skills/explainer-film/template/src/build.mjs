@@ -58,8 +58,10 @@ for (const f of fs.readdirSync(rel("src/scenes")).filter((n) => /^\d\d-.*\.mjs$/
 // sets its colours with presentation attributes or inline styles: every fill and stroke outside
 // masks and clip paths becomes currentColor (`none` stays none), so gradients and two-tone marks
 // flatten to one colour. The build refuses an SVG with a <style> block (its rules would apply to
-// the whole page) or with anything that can run code: <script>, <foreignObject>, an on* handler
-// or a javascript: URL. Nothing is sanitised; such a file must be re-exported. The fixed size
+// the whole page), with anything that can run code or navigate: <script>, <foreignObject>,
+// <meta>, <iframe>, <object>, <embed>, <base>, an on* handler or a javascript: URL, or with a
+// remote reference (an href, src or url() to http:, https: or //; #id and data: are fine) that
+// would fetch during the render. Nothing is sanitised; such a file must be re-exported. The fixed size
 // goes (kept as a viewBox when there is none), so a scene sizes it with CSS
 // (`.wordmark { height: 118px }`), and ids get a per-call prefix so the mark can appear in
 // several scenes.
@@ -74,8 +76,10 @@ function wordmark(cls = "") {
     .replace(/<\?xml[^>]*>|<!DOCTYPE[^[>]*(\[[\s\S]*?\])?\s*>|<!--[\s\S]*?-->/gi, "");
   if (/<style\b/i.test(src))
     throw new Error("ctx.wordmark(): assets/brand/wordmark.svg has a <style> block; export it with presentation attributes instead (Illustrator: Styling > Presentation Attributes)");
-  if (/<script|<foreignObject|[\s/]on\w+\s*=|javascript:/i.test(src))
-    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg contains a script, <foreignObject>, an on* handler or a javascript: URL; export a plain vector SVG instead");
+  if (/<(?:script|foreignObject|meta|iframe|object|embed|base)\b|[\s/]on\w+\s*=|javascript:/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg contains a script, <foreignObject>, <meta>, <iframe>, <object>, <embed>, <base>, an on* handler or a javascript: URL; export a plain vector SVG instead");
+  if (/\b(?:href|src)\s*=\s*["']?\s*(?:https?:|\/\/)|url\(\s*["']?\s*(?:https?:|\/\/)/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg references a remote file (an href, src or url() to http:, https: or //); embed it or export a plain vector SVG instead");
   const p = `wm${++wordmarkN}-`;
   const ink = (part) =>
     part
