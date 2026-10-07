@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+renders/
+previews/
+.hyperframes/
+assets/fonts/
+assets/audio/sfx/takes/
+assets/audio/music/.build-*
+.media/cache/
+index.html
+assets/vendor/
+assets/audio/sfx/*.mp3
+assets/tex/grain.png
