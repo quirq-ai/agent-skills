@@ -40,3 +40,13 @@ rendered film predates them. Canary is described as built and tested for agents 
 environments (people still install from main), the HUD counter reads CANARIES BUILT, the
 channels plate says the trial deploy runs on the CI runner, the installer is labelled "main
 today, channels later", and agents propose reverts rather than make them.
+
+Some lines still describe v0 goals as if they worked, as of 2026-10-07. The gardener only
+reports: its GitHub App does not exist yet, so it proposes no reverts (`script.mjs` frames 10, 12
+and 16, and the gardener plate). Release's lkgr and daily canary jobs run on GitHub schedules,
+which GitHub delays and sometimes skips. So lkgr does not reliably move every ten minutes (frame 07
+and its "EVERY 10 MINUTES" plate), and the canary runs late or not at all on its own; a backstop
+routine starts missed canary runs (frame 08). Perf has recorded nothing since 2026-10-05, so it
+does not record every commit (frame 11 and its PERF RECORDS counter). Treat this film as an
+example of craft, not as a source of facts, and check any claim against the qq guide at
+https://docs.quirq.dev/docs/qq before reusing it.
