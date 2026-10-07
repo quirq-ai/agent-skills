@@ -19,14 +19,17 @@ brand, with its script, plates and scenes.
 The template has two looks, picked by `THEME` in `src/film.mjs`: `quirq` (the default: the
 quirq infra film's dark ground, pink accent and Poppins) and `paper` (the Innernet film's
 warm paper and serif faces). Keep `quirq` for quirq products; for anyone else's product use
-whichever sits closer to its brand and take `PALETTE` from its design tokens.
+whichever sits closer to its brand and take `PALETTE` from its design tokens. For the logo,
+put the product's one-colour wordmark SVG at `assets/brand/wordmark.svg` (for quirq, innernet's
+`public/brand/quirq/wordmark.svg`) and inline it with `ctx.wordmark()`.
 
 ## What you need
 
 - Node 22+, `ffmpeg` and `ffprobe`, `curl`, and a headless Chrome. Set `CHROME` for the
-  capture and frame scripts. Point `HYPERFRAMES_BROWSER_PATH` at chrome-headless-shell (for
-  Playwright's, `chromium_headless_shell-*/chrome-linux/headless_shell`), not full Chrome, or
-  renders are slow; unset, the HyperFrames CLI downloads Chrome for Testing on first render.
+  capture and frame scripts. If you set `HYPERFRAMES_BROWSER_PATH`, point it at
+  chrome-headless-shell (for Playwright's, `chromium_headless_shell-*/chrome-linux/headless_shell`),
+  not full Chrome, which renders about half as fast. Unset, the HyperFrames CLI downloads its
+  own browser on first render.
 - HyperFrames 0.8.111, installed by `npm install` and run through the `npm run` scripts
   (`lint`, `check`, `render`), which pin it so renders repeat and set
   `HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1` so the CLI sends no usage data. Calling it
@@ -141,10 +144,9 @@ silently attaches to whatever your frame 03 is. Then:
 A delivery render is slow. With full Chrome the CLI falls back to screenshot capture, about
 1.3 frames a second (a 63.5 s film took 25 minutes); chrome-headless-shell uses BeginFrame
 capture, about 2.4 frames a second on the starter film (630 frames in 4 min 21 s), so a 60 s
-film takes 13 minutes or more. The render's last summary line names the capture path it used
-("beginframe capture" or the screenshot fallback). Start it in the background with its output
-going to a log, and keep working. It is finished when the process exits 0 and the log's last line names
-the MP4. The quality setting changes the encode, not the frame capture, so no quality is
+film takes 13 minutes or more. Start it in the background with its output going to a log, and
+keep working. It is finished when the process exits 0; its closing summary names the MP4 and
+the capture path it used ("beginframe capture" or the screenshot fallback). The quality setting changes the encode, not the frame capture, so no quality is
 much faster; for a quick look use `frame.mjs` sheets of the built `index.html`.
 
 ## Before you call it done

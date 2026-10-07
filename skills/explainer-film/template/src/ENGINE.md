@@ -55,8 +55,10 @@ export default {
   an id or a class scoped under `#sNN`.
   - `ctx.plate(id, cls)` inlines a plate SVG (`assets/plates/<id>.svg`, 1600x1000) ready to
     draw on. Put it in a positioned wrapper that sets its size.
-  - `ctx.wordmark(cls)` inlines `assets/brand/wordmark.svg` in the theme's colours (class
-    `wordmark`, 120 px tall; size it in the scene's CSS). It fails the build if the file is missing.
+  - `ctx.wordmark(cls)` inlines `assets/brand/wordmark.svg` in the theme's ink (class
+    `wordmark` plus `cls`, 120 px tall; size it in the scene's CSS). It is for a one-colour
+    logo: gradients and two-tone marks flatten to the ink. It fails the build if the file is
+    missing.
   - `ctx.capture(name)` is the path of a real screen capture in `assets/captures/`.
     Capture the real product at 2x (3200 px wide for a 1600 px mount) and keep a 1x copy.
   - `ctx.cap(prefix, { big, unit, title, line })` the standard caption block

@@ -54,17 +54,37 @@ for (const f of fs.readdirSync(rel("src/scenes")).filter((n) => /^\d\d-.*\.mjs$/
   modules[m.id] = m;
 }
 
-// The product's wordmark, inlined so it takes the theme's colours: every fill and stroke becomes
-// currentColor and the fixed size goes, so a scene sizes it with CSS (`.wordmark { height: 118px }`).
-function wordmark(cls = "wordmark") {
+// The product's wordmark, inlined so it takes the theme's ink. Meant for a one-colour logo: every
+// fill and stroke outside masks and clip paths becomes currentColor (attributes, inline styles and
+// the svg's own <style> rules alike), so gradients and two-tone marks flatten to one colour. The
+// fixed size goes, so a scene sizes it with CSS (`.wordmark { height: 118px }`), and ids get a
+// per-call prefix so the mark can appear in several scenes.
+let wordmarkN = 0;
+function wordmark(cls = "") {
   const file = rel("assets/brand/wordmark.svg");
   if (!fs.existsSync(file))
     throw new Error("ctx.wordmark(): add assets/brand/wordmark.svg (for a quirq film, copy public/brand/quirq/wordmark.svg from quirq-ai/innernet unchanged)");
+  const p = `wm${++wordmarkN}-`;
+  const ink = (part) =>
+    part
+      .replace(/\s(fill|stroke)=(["'])(?!none\2)[^"']*\2/g, ' $1="currentColor"')
+      .replace(/\b(fill|stroke)\s*:\s*(?!none\b)[^;"']+/g, "$1:currentColor");
   return fs
     .readFileSync(file, "utf8")
-    .replace(/<\?xml[^>]*>\s*/, "")
-    .replace(/\s(fill|stroke)="(?!none)[^"]*"/g, ' $1="currentColor"')
-    .replace(/<svg\b([^>]*)>/, (_, a) => `<svg${a.replace(/\s(width|height|style|class|preserveAspectRatio)="[^"]*"/g, "")} class="${cls}" aria-hidden="true">`);
+    .replace(/<\?xml[^>]*>|<!DOCTYPE[^>]*>|<!--[\s\S]*?-->|<style[\s\S]*?<\/style>/gi, "")
+    .split(/(<(?:mask|clipPath)\b[\s\S]*?<\/(?:mask|clipPath)>)/)
+    .map((part, k) => (k % 2 ? part : ink(part)))
+    .join("")
+    .replace(/\sid=(["'])([^"']+)\1/g, ` id="${p}$2"`)
+    .replace(/url\(#/g, `url(#${p}`)
+    .replace(/(href=["'])#/g, `$1#${p}`)
+    .replace(/<svg\b([^>]*)>/, (_, a) => {
+      a = a.replace(/\s(width|height|style|class|preserveAspectRatio)=(["'])[^"']*\2/g, "");
+      // Paths with no fill of their own inherit the root's; default it to the ink.
+      if (!/\sfill=/.test(a)) a += ' fill="currentColor"';
+      return `<svg${a} class="${`wordmark ${cls}`.trim()}" aria-hidden="true">`;
+    })
+    .trim();
 }
 
 function ctxFor(seg) {
