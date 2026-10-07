@@ -24,8 +24,9 @@ whichever sits closer to its brand and take `PALETTE` from its design tokens.
 ## What you need
 
 - Node 22+, `ffmpeg` and `ffprobe`, `curl`, and a headless Chrome. Set `CHROME` for the
-  capture and frame scripts, and `HYPERFRAMES_BROWSER_PATH` to the same binary, or the
-  HyperFrames CLI downloads Chrome for Testing on first render.
+  capture and frame scripts. Point `HYPERFRAMES_BROWSER_PATH` at chrome-headless-shell (for
+  Playwright's, `chromium_headless_shell-*/chrome-linux/headless_shell`), not full Chrome, or
+  renders are slow; unset, the HyperFrames CLI downloads Chrome for Testing on first render.
 - HyperFrames 0.8.111, installed by `npm install` and run through the `npm run` scripts
   (`lint`, `check`, `render`), which pin it so renders repeat and set
   `HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1` so the CLI sends no usage data. Calling it
@@ -93,7 +94,10 @@ silently attaches to whatever your frame 03 is. Then:
    requester's words verbatim, and the defaults you chose.
 3. **Facts.** Fill `FACTS.md`: every number, name, path and claim the film could use, each
    with where you checked it (`path:line`, a command and its output). The script and every
-   label are checked against this file, never against memory.
+   label are checked against this file, never against memory. A count that can drift
+   (repos, users, versions): take it from the live source on the day where you can, record
+   the date next to it, and keep the source's qualifiers ("most", "about"). If you cannot
+   re-check it, say "as of <date>" or round it ("about thirty").
 4. **Storyboard.** Write `STORYBOARD.md`, one block per frame (scene, duration, line, what
    moves on which word, what the frame must not be), and fill `src/film.mjs` (brand,
    theme and palette, HUD devices, chapters, frames). If the requester is
@@ -134,9 +138,12 @@ silently attaches to whatever your frame 03 is. Then:
     for the web copy, captions and poster. Commit the film's sources, never `renders/`,
     `previews/`, `.env` or `node_modules/`.
 
-A delivery render is slow: 1.3 to 2 frames a second on a software GPU, so a 60 s film
-(1,800 frames) takes 15 to 25 minutes. Start it in the background with its output going to a
-log, and keep working. It is finished when the process exits 0 and the log's last line names
+A delivery render is slow. With full Chrome the CLI falls back to screenshot capture, about
+1.3 frames a second (a 63.5 s film took 25 minutes); chrome-headless-shell uses BeginFrame
+capture, about 2.4 frames a second on the starter film (630 frames in 4 min 21 s), so a 60 s
+film takes 13 minutes or more. The render's last summary line names the capture path it used
+("beginframe capture" or the screenshot fallback). Start it in the background with its output
+going to a log, and keep working. It is finished when the process exits 0 and the log's last line names
 the MP4. The quality setting changes the encode, not the frame capture, so no quality is
 much faster; for a quick look use `frame.mjs` sheets of the built `index.html`.
 

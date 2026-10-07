@@ -54,9 +54,22 @@ for (const f of fs.readdirSync(rel("src/scenes")).filter((n) => /^\d\d-.*\.mjs$/
   modules[m.id] = m;
 }
 
+// The product's wordmark, inlined so it takes the theme's colours: every fill and stroke becomes
+// currentColor and the fixed size goes, so a scene sizes it with CSS (`.wordmark { height: 118px }`).
+function wordmark(cls = "wordmark") {
+  const file = rel("assets/brand/wordmark.svg");
+  if (!fs.existsSync(file))
+    throw new Error("ctx.wordmark(): add assets/brand/wordmark.svg (for a quirq film, copy public/brand/quirq/wordmark.svg from quirq-ai/innernet unchanged)");
+  return fs
+    .readFileSync(file, "utf8")
+    .replace(/<\?xml[^>]*>\s*/, "")
+    .replace(/\s(fill|stroke)="(?!none)[^"]*"/g, ' $1="currentColor"')
+    .replace(/<svg\b([^>]*)>/, (_, a) => `<svg${a.replace(/\s(width|height|style|class|preserveAspectRatio)="[^"]*"/g, "")} class="${cls}" aria-hidden="true">`);
+}
+
 function ctxFor(seg) {
   return {
-    seg, segs, total, W, H, esc, plate,
+    seg, segs, total, W, H, esc, plate, wordmark,
     capture: (name) => `assets/captures/${name}`,
     /** Absolute time of a word in this scene's narration. */
     word(w, nth = 0) {

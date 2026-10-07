@@ -28,8 +28,10 @@ The template's default theme is this film's look: `THEME = "quirq"` in `src/film
 the film's palette (plum-black ground, pink accent, amber in the night chapter) from
 `src/themes/index.mjs`, and `src/themes/quirq.css` carries the dark-ground aurora, vignette, screen-blended grain, mount
 shadows, chapter-card ghost and Poppins faces. So a new quirq film needs no CSS work; this
-folder's `film.css` is the original the theme was taken from. The wordmark is
-`public/brand/quirq/wordmark.svg` in quirq-ai/innernet; copy it unchanged. Check contrast
+folder's `film.css` is the original the theme was taken from. For the wordmark, copy
+`public/brand/quirq/wordmark.svg` from quirq-ai/innernet unchanged to
+`assets/brand/wordmark.svg`; `ctx.wordmark()` (used by scenes 02 and 18 here) inlines it in
+the theme's ink. Check contrast
 after any palette change (`npm run check`).
 
 ## Corrections after the render

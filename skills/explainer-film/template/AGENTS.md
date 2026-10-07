@@ -13,7 +13,7 @@ route to its workflows, skip its usage check and intent interview, write scenes 
 
 HyperFrames' own skill router and workflows (`/hyperframes` and the skills it lists) do not
 apply here: the explainer-film skill and `src/ENGINE.md` override them, and HyperFrames'
-skills need not be installed or refreshed mid-film.
+skills should not be installed or refreshed mid-film.
 
 ## Commands
 
