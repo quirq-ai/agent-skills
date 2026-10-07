@@ -54,31 +54,39 @@ for (const f of fs.readdirSync(rel("src/scenes")).filter((n) => /^\d\d-.*\.mjs$/
   modules[m.id] = m;
 }
 
-// The product's wordmark, inlined so it takes the theme's ink. Meant for a one-colour logo: every
-// fill and stroke outside masks and clip paths becomes currentColor (attributes, inline styles and
-// the svg's own <style> rules alike), so gradients and two-tone marks flatten to one colour. The
-// fixed size goes, so a scene sizes it with CSS (`.wordmark { height: 118px }`), and ids get a
-// per-call prefix so the mark can appear in several scenes.
+// The product's wordmark, inlined so it takes the theme's ink. Meant for a one-colour logo that
+// sets its colours with presentation attributes or inline styles: every fill and stroke outside
+// masks and clip paths becomes currentColor (`none` stays none), so gradients and two-tone marks
+// flatten to one colour. An SVG with its own <style> block is refused, since its rules would
+// apply to the whole page. Scripts and on* handlers are dropped. The fixed size goes (kept as a
+// viewBox when there is none), so a scene sizes it with CSS (`.wordmark { height: 118px }`), and
+// ids get a per-call prefix so the mark can appear in several scenes.
 let wordmarkN = 0;
 function wordmark(cls = "") {
   const file = rel("assets/brand/wordmark.svg");
   if (!fs.existsSync(file))
     throw new Error("ctx.wordmark(): add assets/brand/wordmark.svg (for a quirq film, copy public/brand/quirq/wordmark.svg from quirq-ai/innernet unchanged)");
+  const src = fs.readFileSync(file, "utf8");
+  if (/<style\b/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg has a <style> block; export it with presentation attributes instead (Illustrator: Styling > Presentation Attributes)");
   const p = `wm${++wordmarkN}-`;
   const ink = (part) =>
     part
-      .replace(/\s(fill|stroke)=(["'])(?!none\2)[^"']*\2/g, ' $1="currentColor"')
-      .replace(/\b(fill|stroke)\s*:\s*(?!none\b)[^;"']+/g, "$1:currentColor");
-  return fs
-    .readFileSync(file, "utf8")
-    .replace(/<\?xml[^>]*>|<!DOCTYPE[^>]*>|<!--[\s\S]*?-->|<style[\s\S]*?<\/style>/gi, "")
+      .replace(/\s(fill|stroke)=(["'])(?!none\2)(?:(?!\2).)*\2/g, ' $1="currentColor"')
+      .replace(/\b(fill|stroke)\s*:(?!\s*none\b)\s*[^;"']+/g, "$1:currentColor");
+  return src
+    .replace(/<\?xml[^>]*>|<!DOCTYPE[^[>]*(\[[\s\S]*?\])?\s*>|<!--[\s\S]*?-->/gi, "")
+    .replace(/<script\b[\s\S]*?<\/script>|<script\b[^>]*\/>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*(["'])[\s\S]*?\1/gi, "")
     .split(/(<(?:mask|clipPath)\b[\s\S]*?<\/(?:mask|clipPath)>)/)
     .map((part, k) => (k % 2 ? part : ink(part)))
     .join("")
     .replace(/\sid=(["'])([^"']+)\1/g, ` id="${p}$2"`)
-    .replace(/url\(#/g, `url(#${p}`)
+    .replace(/url\(\s*(['"]?)#/g, `url($1#${p}`)
     .replace(/(href=["'])#/g, `$1#${p}`)
     .replace(/<svg\b([^>]*)>/, (_, a) => {
+      const dim = (k) => a.match(new RegExp(`\\s${k}=(["'])([\\d.]+)(?:px)?\\1`))?.[2];
+      if (!/\sviewBox=/.test(a) && dim("width") && dim("height")) a += ` viewBox="0 0 ${dim("width")} ${dim("height")}"`;
       a = a.replace(/\s(width|height|style|class|preserveAspectRatio)=(["'])[^"']*\2/g, "");
       // Paths with no fill of their own inherit the root's; default it to the ink.
       if (!/\sfill=/.test(a)) a += ' fill="currentColor"';

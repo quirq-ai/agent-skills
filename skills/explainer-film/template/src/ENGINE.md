@@ -57,8 +57,9 @@ export default {
     draw on. Put it in a positioned wrapper that sets its size.
   - `ctx.wordmark(cls)` inlines `assets/brand/wordmark.svg` in the theme's ink (class
     `wordmark` plus `cls`, 120 px tall; size it in the scene's CSS). It is for a one-colour
-    logo: gradients and two-tone marks flatten to the ink. It fails the build if the file is
-    missing.
+    logo whose colours are presentation attributes or inline styles: gradients and two-tone
+    marks flatten to the ink, and masks and clip paths keep their own colours. It fails the
+    build if the file is missing or has a `<style>` block.
   - `ctx.capture(name)` is the path of a real screen capture in `assets/captures/`.
     Capture the real product at 2x (3200 px wide for a 1600 px mount) and keep a 1x copy.
   - `ctx.cap(prefix, { big, unit, title, line })` the standard caption block
@@ -139,7 +140,7 @@ frame in the storyboard: the confirmed layout is kept and dressed, never redrawn
 
 `npm run check` reports errors by element. The ones a new film usually hits:
 
-- **content_overlap between a big serif title and a label above it**, even when the glyphs
+- **content_overlap between a big title or numeral and a label next to it**, even when the glyphs
   do not touch. A display face's line box is taller than its glyphs. Give a big title or
   numeral `line-height: 1` and leave a gap of about 30% of its font size between it and the
   label above, below or beside it (a 230 px numeral needed about 70 px).
