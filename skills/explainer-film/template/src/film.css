@@ -116,6 +116,7 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f7f5f
 .callouts path, .callouts line, .callouts circle, .callouts ellipse, .callouts rect, .callouts polyline, .callouts polygon { stroke: var(--link); stroke-width: 2.2; fill: none; stroke-dasharray: 100 110; }
 .callout-label { position: absolute; font: italic var(--serif-w) 29px/1.2 var(--serif); color: var(--link); white-space: nowrap; }
 
+.wordmark { display: block; height: 120px; width: auto; overflow: visible; color: var(--ink); }
 .mono { font-family: "JetBrains Mono", monospace; }
 .serif { font-family: var(--serif); font-weight: var(--serif-w); }
 .serif-i { font-family: var(--serif); font-style: italic; font-weight: var(--serif-w); }

@@ -54,9 +54,58 @@ for (const f of fs.readdirSync(rel("src/scenes")).filter((n) => /^\d\d-.*\.mjs$/
   modules[m.id] = m;
 }
 
+// The product's wordmark, inlined so it takes the theme's ink. Meant for a one-colour logo that
+// sets its colours with presentation attributes or inline styles: every fill and stroke outside
+// masks and clip paths becomes currentColor (`none` stays none), so gradients and two-tone marks
+// flatten to one colour. The build refuses an SVG with a <style> block (its rules would apply to
+// the whole page), with anything that can run code or navigate: <script>, <foreignObject>,
+// <meta>, <iframe>, <object>, <embed>, <base>, an on* handler or a javascript: URL, or with a
+// remote reference (an href, src or url() to http:, https: or //; #id and data: are fine) that
+// would fetch during the render. Nothing is sanitised; such a file must be re-exported. The fixed size
+// goes (kept as a viewBox when there is none), so a scene sizes it with CSS
+// (`.wordmark { height: 118px }`), and ids get a per-call prefix so the mark can appear in
+// several scenes.
+let wordmarkN = 0;
+function wordmark(cls = "") {
+  const file = rel("assets/brand/wordmark.svg");
+  if (!fs.existsSync(file))
+    throw new Error("ctx.wordmark(): add assets/brand/wordmark.svg (for a quirq film, copy public/brand/quirq/wordmark.svg from quirq-ai/innernet unchanged)");
+  // Strip the prolog and comments first, then check exactly the text that gets inlined.
+  const src = fs
+    .readFileSync(file, "utf8")
+    .replace(/<\?xml[^>]*>|<!DOCTYPE[^[>]*(\[[\s\S]*?\])?\s*>|<!--[\s\S]*?-->/gi, "");
+  if (/<style\b/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg has a <style> block; export it with presentation attributes instead (Illustrator: Styling > Presentation Attributes)");
+  if (/<(?:script|foreignObject|meta|iframe|object|embed|base)\b|[\s/]on\w+\s*=|javascript:/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg contains a script, <foreignObject>, <meta>, <iframe>, <object>, <embed>, <base>, an on* handler or a javascript: URL; export a plain vector SVG instead");
+  if (/\b(?:href|src)\s*=\s*["']?\s*(?:https?:|\/\/)|url\(\s*["']?\s*(?:https?:|\/\/)/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg references a remote file (an href, src or url() to http:, https: or //); embed it or export a plain vector SVG instead");
+  const p = `wm${++wordmarkN}-`;
+  const ink = (part) =>
+    part
+      .replace(/\s(fill|stroke)=(["'])(?!none\2)(?:(?!\2).)*\2/g, ' $1="currentColor"')
+      .replace(/\b(fill|stroke)\s*:(?!\s*none\b)\s*[^;"']+/g, "$1:currentColor");
+  return src
+    .split(/(<(?:mask|clipPath)\b[\s\S]*?<\/(?:mask|clipPath)>)/)
+    .map((part, k) => (k % 2 ? part : ink(part)))
+    .join("")
+    .replace(/\sid=(["'])([^"']+)\1/g, ` id="${p}$2"`)
+    .replace(/url\(\s*(['"]?)#/g, `url($1#${p}`)
+    .replace(/(href=["'])#/g, `$1#${p}`)
+    .replace(/<svg\b([^>]*)>/, (_, a) => {
+      const dim = (k) => a.match(new RegExp(`\\s${k}=(["'])([\\d.]+)(?:px)?\\1`))?.[2];
+      if (!/\sviewBox=/.test(a) && dim("width") && dim("height")) a += ` viewBox="0 0 ${dim("width")} ${dim("height")}"`;
+      a = a.replace(/\s(width|height|style|class|preserveAspectRatio)=(["'])[^"']*\2/g, "");
+      // Paths with no fill of their own inherit the root's; default it to the ink.
+      if (!/\sfill=/.test(a)) a += ' fill="currentColor"';
+      return `<svg${a} class="${`wordmark ${cls}`.trim()}" aria-hidden="true">`;
+    })
+    .trim();
+}
+
 function ctxFor(seg) {
   return {
-    seg, segs, total, W, H, esc, plate,
+    seg, segs, total, W, H, esc, plate, wordmark,
     capture: (name) => `assets/captures/${name}`,
     /** Absolute time of a word in this scene's narration. */
     word(w, nth = 0) {

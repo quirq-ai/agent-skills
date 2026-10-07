@@ -55,6 +55,14 @@ export default {
   an id or a class scoped under `#sNN`.
   - `ctx.plate(id, cls)` inlines a plate SVG (`assets/plates/<id>.svg`, 1600x1000) ready to
     draw on. Put it in a positioned wrapper that sets its size.
+  - `ctx.wordmark(cls)` inlines `assets/brand/wordmark.svg` in the theme's ink (class
+    `wordmark` plus `cls`, 120 px tall; size it in the scene's CSS). It is for a one-colour
+    logo whose colours are presentation attributes or inline styles: gradients and two-tone
+    marks flatten to the ink, and masks and clip paths keep their own colours. It fails the
+    build if the file is missing, has a `<style>` block, contains anything that can run code
+    or navigate (`<script>`, `<foreignObject>`, `<meta>`, `<iframe>`, `<object>`, `<embed>`,
+    `<base>`, an `on*` handler, a `javascript:` URL), or references a remote file (an `href`,
+    `src` or `url()` to `http:`, `https:` or `//`; `#id` and `data:` are fine).
   - `ctx.capture(name)` is the path of a real screen capture in `assets/captures/`.
     Capture the real product at 2x (3200 px wide for a 1600 px mount) and keep a 1x copy.
   - `ctx.cap(prefix, { big, unit, title, line })` the standard caption block
@@ -135,10 +143,10 @@ frame in the storyboard: the confirmed layout is kept and dressed, never redrawn
 
 `npm run check` reports errors by element. The ones a new film usually hits:
 
-- **content_overlap between a big serif title and a label above it**, even when the glyphs
+- **content_overlap between a big title or numeral and a label next to it**, even when the glyphs
   do not touch. A display face's line box is taller than its glyphs. Give a big title or
   numeral `line-height: 1` and leave a gap of about 30% of its font size between it and the
-  label above or beside it (a 230 px numeral needed about 70 px).
+  label above, below or beside it (a 230 px numeral needed about 70 px).
 - **Overlap you meant** (a pile of cards, a stamp over a page): put
   `data-layout-allow-overlap` on each overlapping element itself. On a container it does
   nothing.
