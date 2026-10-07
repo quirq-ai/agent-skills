@@ -57,27 +57,31 @@ for (const f of fs.readdirSync(rel("src/scenes")).filter((n) => /^\d\d-.*\.mjs$/
 // The product's wordmark, inlined so it takes the theme's ink. Meant for a one-colour logo that
 // sets its colours with presentation attributes or inline styles: every fill and stroke outside
 // masks and clip paths becomes currentColor (`none` stays none), so gradients and two-tone marks
-// flatten to one colour. An SVG with its own <style> block is refused, since its rules would
-// apply to the whole page. Scripts and on* handlers are dropped. The fixed size goes (kept as a
-// viewBox when there is none), so a scene sizes it with CSS (`.wordmark { height: 118px }`), and
-// ids get a per-call prefix so the mark can appear in several scenes.
+// flatten to one colour. The build refuses an SVG with a <style> block (its rules would apply to
+// the whole page) or with anything that can run code: <script>, <foreignObject>, an on* handler
+// or a javascript: URL. Nothing is sanitised; such a file must be re-exported. The fixed size
+// goes (kept as a viewBox when there is none), so a scene sizes it with CSS
+// (`.wordmark { height: 118px }`), and ids get a per-call prefix so the mark can appear in
+// several scenes.
 let wordmarkN = 0;
 function wordmark(cls = "") {
   const file = rel("assets/brand/wordmark.svg");
   if (!fs.existsSync(file))
     throw new Error("ctx.wordmark(): add assets/brand/wordmark.svg (for a quirq film, copy public/brand/quirq/wordmark.svg from quirq-ai/innernet unchanged)");
-  const src = fs.readFileSync(file, "utf8");
+  // Strip the prolog and comments first, then check exactly the text that gets inlined.
+  const src = fs
+    .readFileSync(file, "utf8")
+    .replace(/<\?xml[^>]*>|<!DOCTYPE[^[>]*(\[[\s\S]*?\])?\s*>|<!--[\s\S]*?-->/gi, "");
   if (/<style\b/i.test(src))
     throw new Error("ctx.wordmark(): assets/brand/wordmark.svg has a <style> block; export it with presentation attributes instead (Illustrator: Styling > Presentation Attributes)");
+  if (/<script|<foreignObject|[\s/]on\w+\s*=|javascript:/i.test(src))
+    throw new Error("ctx.wordmark(): assets/brand/wordmark.svg contains a script, <foreignObject>, an on* handler or a javascript: URL; export a plain vector SVG instead");
   const p = `wm${++wordmarkN}-`;
   const ink = (part) =>
     part
       .replace(/\s(fill|stroke)=(["'])(?!none\2)(?:(?!\2).)*\2/g, ' $1="currentColor"')
       .replace(/\b(fill|stroke)\s*:(?!\s*none\b)\s*[^;"']+/g, "$1:currentColor");
   return src
-    .replace(/<\?xml[^>]*>|<!DOCTYPE[^[>]*(\[[\s\S]*?\])?\s*>|<!--[\s\S]*?-->/gi, "")
-    .replace(/<script\b[\s\S]*?<\/script>|<script\b[^>]*\/>/gi, "")
-    .replace(/\son[a-z]+\s*=\s*(["'])[\s\S]*?\1/gi, "")
     .split(/(<(?:mask|clipPath)\b[\s\S]*?<\/(?:mask|clipPath)>)/)
     .map((part, k) => (k % 2 ? part : ink(part)))
     .join("")

@@ -142,10 +142,10 @@ silently attaches to whatever your frame 03 is. Then:
     `previews/`, `.env` or `node_modules/`.
 
 A delivery render is slow. Measured in 4-vCPU Linux containers with a software GPU and
-HyperFrames 0.8.111 (runs vary by about 10%): chrome-headless-shell uses BeginFrame capture,
-2.3 to 2.6 frames a second on the starter film's 630 frames, so a 60 s film takes 13 minutes
-or more; full Chrome falls back to screenshot capture, 1.3 to 1.7 frames a second (a 63.5 s
-film took 25 minutes). Start the render in the background with its output going to a log, and
+HyperFrames 0.8.111: chrome-headless-shell uses BeginFrame capture, 2.3 to 2.6 frames a second
+on the starter film's 630 frames, so a 60 s film takes about 12 to 13 minutes and a heavier
+film longer; full Chrome falls back to screenshot capture, 1.4 to 1.7 frames a second on the
+starter and 1.3 on a real 63.5 s film (25 minutes). Start the render in the background with its output going to a log, and
 keep working. It is finished when the process exits 0; its closing summary names the MP4 and
 the capture path it used ("beginframe capture" or the screenshot fallback). The quality
 setting changes the encode, not the frame capture, so no quality is much faster; for a quick look use `frame.mjs` sheets of the built `index.html`.
